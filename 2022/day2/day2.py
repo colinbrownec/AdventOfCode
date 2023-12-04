@@ -8,17 +8,21 @@ plays = {
   'A': Play.Rock, 'B': Play.Paper, 'C': Play.Scissors,
   'X': Play.Rock, 'Y': Play.Paper, 'Z': Play.Scissors,
 }
+wins_against = {
+    Play.Rock: Play.Paper,
+    Play.Paper: Play.Scissors,
+    Play.Scissors: Play.Rock,    
+}
 
 @dataclass
 class Game:
   opponent: Play
   player: Play
   def score(self) -> int:
+    if wins_against[self.opponent] == self.player:
+      return self.player.value + 6
     if self.opponent == self.player:
       return self.player.value + 3
-    match (self.opponent, self.player):
-      case (Play.Rock, Play.Paper) | (Play.Paper, Play.Scissors) | (Play.Scissors, Play.Rock):
-        return self.player.value + 6
     return self.player.value
 
 def parse_p1_game(line):
@@ -28,12 +32,6 @@ def parse_p1_game(line):
 p1_games = [parse_p1_game(line) for line in txt]
 p1 = sum(game.score() for game in p1_games)
 print(p1)
-
-wins_against = {
-    Play.Rock: Play.Paper,
-    Play.Paper: Play.Scissors,
-    Play.Scissors: Play.Rock,    
-}
 
 def parse_p2_game(line):
   o, result = line.split()
