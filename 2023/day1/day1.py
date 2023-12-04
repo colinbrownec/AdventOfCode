@@ -1,6 +1,6 @@
 import re
 
-pattern = re.compile('[1-9]|one|two|three|four|five|six|seven|eight|nine')
+txt = open('input.txt').readlines()
 
 def to_int(x):
   return int(x) if x.isdigit() else {
@@ -15,11 +15,16 @@ def to_int(x):
     'nine': 9
   }.get(x)
 
-sum = 0
-for w in open('input.txt').readlines():
-  nums = [pattern.match(w, i) for i in range(len(w))]
-  nums = [num.group(0) for num in nums if num]
+def calibration(txt, number_pattern):
+  sum = 0
+  for line in txt:
+    nums = [number_pattern.match(line, i) for i in range(len(line))]
+    nums = [num.group() for num in nums if num]
+    sum += to_int(nums[0]) * 10 + to_int(nums[-1])
+  return sum
 
-  sum += to_int(nums[0]) * 10 + to_int(nums[-1])
+p1 = calibration(txt, re.compile('[1-9]'))
+print(p1)
 
-print(sum)
+p2 = calibration(txt, re.compile('[1-9]|one|two|three|four|five|six|seven|eight|nine'))
+print(p2)
