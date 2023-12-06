@@ -28,13 +28,6 @@ unsigned long use_map(const vector<MapRange>& map, unsigned long val) {
   return val;
 }
 
-unsigned long seed_to_location(const vector<vector<MapRange>>& maps, unsigned long val) {
-  for (const auto& map : maps) {
-    val = use_map(map, val);
-  }
-  return val;
-}
-
 int main()
 {
   vector<unsigned long> seeds;
@@ -71,13 +64,15 @@ int main()
     }
   }
 
-  // part 1
-  vector<unsigned long> locations;
-  transform(seeds.begin(), seeds.end(), back_inserter(locations), [&maps](unsigned long seed) {
-    return seed_to_location(maps, seed);
-  });
+  auto seed_to_location = [&maps](unsigned long val) {
+    for (const auto& map : maps) {
+      val = use_map(map, val);
+    }
+    return val;
+  };
 
-  unsigned long p1 = *min_element(locations.begin(), locations.end());
+  // part 1
+  unsigned long p1 = ranges::min(seeds | views::transform(seed_to_location));
   cout << "p1 = " << p1 << endl;
 
   // part 2
@@ -90,7 +85,7 @@ int main()
        range.end(),
        p2,
        [](unsigned long a, unsigned long b) { return min(a, b); },
-       [&maps](int seed) { return seed_to_location(maps, seed); });
+       seed_to_location);
   }
   cout << "p2 = " << p2 << endl;
 }
