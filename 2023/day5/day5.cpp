@@ -1,8 +1,10 @@
+#include <algorithm>
+#include <execution>
 #include <iostream>
+#include <numeric>
+#include <ranges>
 #include <sstream>
 #include <vector>
-#include <algorithm>
-#include <numeric>
 
 using namespace std;
 
@@ -78,16 +80,17 @@ int main()
   unsigned long p1 = *min_element(locations.begin(), locations.end());
   cout << "p1 = " << p1 << endl;
 
+  // part 2
   unsigned long p2 = numeric_limits<unsigned long>::max();
   for (size_t i = 0; i < seeds.size(); i += 2) {
-    for (unsigned long seed = seeds[i]; seed < seeds[i] + seeds[i + 1]; ++seed) {
-      // if (seed % 100'000'000 == 0) {
-      //   cout << (seed - seeds[i]) << " / " << seeds[i + 1] << "\r";
-      // }
-      p2 = min(p2, seed_to_location(maps, seed));
-    }
-    // cout << "[" <<seeds[i] << ", " << (seeds[i] + seeds[i + 1]) << "] done\n";
+     ranges::iota_view range{ seeds[i], seeds[i] + seeds[i + 1] };
+     p2 = transform_reduce(
+       execution::par,
+       range.begin(),
+       range.end(),
+       p2,
+       [](unsigned long a, unsigned long b) { return min(a, b); },
+       [&maps](int seed) { return seed_to_location(maps, seed); });
   }
-
   cout << "p2 = " << p2 << endl;
 }
