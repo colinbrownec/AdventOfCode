@@ -1,4 +1,3 @@
-import math
 import re
 
 txt = open('input.txt').readlines()

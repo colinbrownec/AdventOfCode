@@ -63,6 +63,9 @@ p1 = min(seed_to_location(seed) for seed in seeds)
 print(p1)
 
 # %%
+big_map = dict()
+
+
 p2 = math.inf
 for i in range(0, len(seeds), 2):
   for seed in range(seeds[i], seeds[i] + seeds[i + 1]):
